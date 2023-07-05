@@ -14,13 +14,26 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.halitakca.kotlininstagram.databinding.ActivityUploadBinding
+import java.util.UUID
 
 class UploadActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUploadBinding
 
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var fireStore: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
+
 
     var selectedPicture : Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +44,30 @@ class UploadActivity : AppCompatActivity() {
 
         registerLauncher()
 
+        auth = Firebase.auth
+        fireStore = Firebase.firestore
+        storage = Firebase.storage
+
     }
 
     fun upload(view: View){
 
+        // universal unique id
+        val uuid = UUID.randomUUID()
+        val imageName = "$uuid.jpg"
+
+        // store the images to the database
+        val reference = storage.reference
+        val imageReference = reference.child("images").child(imageName)
+
+        if(selectedPicture != null){
+            imageReference.putFile(selectedPicture!!).addOnSuccessListener {
+                // download URL -> Fire Store
+
+            }.addOnFailureListener{
+                Toast.makeText(this,it.localizedMessage,Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     fun selectImage(view: View){
