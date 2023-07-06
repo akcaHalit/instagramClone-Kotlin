@@ -22,6 +22,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.halitakca.kotlininstagram.databinding.ActivityUploadBinding
+import java.sql.Timestamp
 import java.util.UUID
 
 class UploadActivity : AppCompatActivity() {
@@ -63,6 +64,27 @@ class UploadActivity : AppCompatActivity() {
         if(selectedPicture != null){
             imageReference.putFile(selectedPicture!!).addOnSuccessListener {
                 // download URL -> Fire Store
+
+                val uploadedPictureReference = storage.reference.child("images").child(imageName)
+                uploadedPictureReference.downloadUrl.addOnSuccessListener {
+                    val downloadUrl = it.toString()
+                    // put to the database
+                    if(auth.currentUser != null){
+                        val postMap = hashMapOf<String,Any>()
+                        postMap.put("downloadUrl",downloadUrl)
+                        postMap.put("useremail",auth.currentUser!!.email!!)
+                        postMap.put("comment",binding.commentText.text.toString())
+                        postMap.put("date",com.google.firebase.Timestamp.now())
+
+                        fireStore.collection("Posts").add(postMap).addOnSuccessListener {
+
+                            finish()
+                        }.addOnFailureListener{
+                            Toast.makeText(this@UploadActivity,it.localizedMessage,Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                }
 
             }.addOnFailureListener{
                 Toast.makeText(this,it.localizedMessage,Toast.LENGTH_LONG).show()

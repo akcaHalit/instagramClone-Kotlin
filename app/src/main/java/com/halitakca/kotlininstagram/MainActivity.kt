@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     fun signInClicked(view: View){
         val email = binding.emailText.text.toString()
         val password = binding.passwordText.text.toString()
