@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.halitakca.kotlininstagram.R
@@ -47,7 +48,11 @@ class FeedActivity : AppCompatActivity() {
     }
 
     private fun getData(){
-        db.collection("Posts").addSnapshotListener{ value, error ->
+        //db.collection("Posts").whereEqualTo("useremail","ati@gmail.com").addSnapshotListener{ value, error ->
+        //db.collection("Posts").addSnapshotListener{ value, error ->
+
+        db.collection("Posts").orderBy("date",Query.Direction.DESCENDING).addSnapshotListener{ value, error ->
+        // new post will be at the top
 
             if(error != null){
                 Toast.makeText(this,error.localizedMessage,Toast.LENGTH_LONG).show()
@@ -55,6 +60,8 @@ class FeedActivity : AppCompatActivity() {
                 if(value != null){
                     if(!value.isEmpty){
                         val documents = value.documents
+
+                        postArrayList.clear()
                         for(document in documents){
                             // casting
                             val comment = document.get("comment") as String
