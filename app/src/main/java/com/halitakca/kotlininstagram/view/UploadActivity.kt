@@ -1,6 +1,5 @@
-package com.halitakca.kotlininstagram
+package com.halitakca.kotlininstagram.view
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -22,7 +21,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.halitakca.kotlininstagram.databinding.ActivityUploadBinding
-import java.sql.Timestamp
 import java.util.UUID
 
 class UploadActivity : AppCompatActivity() {
